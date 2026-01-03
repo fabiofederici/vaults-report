@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
+import { ModeToggle } from "@/components/mode-toggle"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,7 +23,7 @@ export function DashboardLayout({ children, title, defaultOpen, directoryCount }
       <AppSidebar directoryCount={directoryCount} />
       <SidebarInset>
         <header className="bg-background sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
+          <div className="flex flex-1 items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator
               orientation="vertical"
@@ -35,6 +36,9 @@ export function DashboardLayout({ children, title, defaultOpen, directoryCount }
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
+          </div>
+          <div className="px-4">
+            <ModeToggle />
           </div>
         </header>
         <main className="mx-auto flex w-full max-w-5xl min-w-0 flex-1 flex-col gap-8 px-4 py-6 md:px-0 lg:py-8">

@@ -1,4 +1,4 @@
-import { Fragment, useState, useMemo } from 'react'
+import { Fragment, useState, useMemo, useEffect } from 'react'
 import { GithubLogo, FileText, XLogo, Globe, LinkedinLogo, EnvelopeSimple, TelegramLogo, X, Funnel } from '@phosphor-icons/react'
 import {
   Table,
@@ -135,13 +135,13 @@ function LinkIcons({ entry, showAll = false }: { entry: DirectoryEntry; showAll?
   )
 }
 
-function ProjectHoverContent({ entry, category }: { entry: DirectoryEntry; category: string }) {
+function ProjectHoverContent({ entry, category, isDark }: { entry: DirectoryEntry; category: string; isDark: boolean }) {
   return (
     <div className="space-y-3">
       {/* Header */}
       <div className="flex items-center gap-3">
         <img
-          src={`${import.meta.env.BASE_URL}assets/logos/normalized/${entry.slug}-light.svg`}
+          src={`${import.meta.env.BASE_URL}assets/logos/normalized/${entry.slug}-${isDark ? 'dark' : 'light'}.svg`}
           alt={entry.name}
           className="size-8"
         />
@@ -271,6 +271,18 @@ function FilterToolbar({
 export function DirectoryTable({ data }: DirectoryTableProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedChains, setSelectedChains] = useState<string[]>([])
+  const [isDark, setIsDark] = useState(false)
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains('dark'))
+
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'))
+    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+
+    return () => observer.disconnect()
+  }, [])
 
   // Extract unique categories and chains
   const { categories, chains } = useMemo(() => {
@@ -367,7 +379,7 @@ export function DirectoryTable({ data }: DirectoryTableProps) {
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <img
-                            src={`${import.meta.env.BASE_URL}assets/logos/normalized/${entry.slug}-light.svg`}
+                            src={`${import.meta.env.BASE_URL}assets/logos/normalized/${entry.slug}-${isDark ? 'dark' : 'light'}.svg`}
                             alt={entry.name}
                             className="size-6"
                           />
@@ -388,7 +400,7 @@ export function DirectoryTable({ data }: DirectoryTableProps) {
                     </TableRow>
                   </HoverCardTrigger>
                   <HoverCardContent side="bottom" align="end" className="w-96">
-                    <ProjectHoverContent entry={entry} category={group.category} />
+                    <ProjectHoverContent entry={entry} category={group.category} isDark={isDark} />
                   </HoverCardContent>
                 </HoverCard>
               ))}

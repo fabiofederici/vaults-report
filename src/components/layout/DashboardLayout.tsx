@@ -12,11 +12,12 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 interface DashboardLayoutProps {
   children: ReactNode
   title: string
+  defaultOpen?: boolean
 }
 
-export function DashboardLayout({ children, title }: DashboardLayoutProps) {
+export function DashboardLayout({ children, title, defaultOpen }: DashboardLayoutProps) {
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">

@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://glamsystems.github.io',
-  base: '/',
+  base: '/vaults-report',
   integrations: [react()],
 
   vite: {

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { FolderOpen, Books, Info } from "@phosphor-icons/react"
+import { FolderOpen, Books, Info, Globe } from "@phosphor-icons/react"
 
 import {
   Sidebar,
@@ -16,9 +16,11 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 const navItems = [
-  { title: "Directory", url: "/", icon: FolderOpen },
+  { title: "Ecosystem", url: "/ecosystem", icon: Globe, desktopOnly: true },
+  { title: "Directory", url: "/directory", icon: FolderOpen },
   { title: "Resources", url: "/resources", icon: Books },
 ]
 
@@ -31,6 +33,9 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function AppSidebar({ directoryCount, ...props }: AppSidebarProps) {
+  const isMobile = useIsMobile()
+  const filteredNavItems = navItems.filter(item => !item.desktopOnly || !isMobile)
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -54,7 +59,7 @@ export function AppSidebar({ directoryCount, ...props }: AppSidebarProps) {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => (
+              {filteredNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={`${import.meta.env.BASE_URL}${item.url.replace(/^\//, '')}`}>

@@ -1,5 +1,6 @@
 import * as React from "react"
-import { FolderOpen, Books, Info, Globe } from "@phosphor-icons/react"
+import { FolderOpen, Books, Info, Globe, XLogo } from "@phosphor-icons/react"
+import { GitHubLogoIcon } from "@radix-ui/react-icons"
 
 import {
   Sidebar,
@@ -90,6 +91,26 @@ export function AppSidebar({ directoryCount, ...props }: AppSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        <div className="flex gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:gap-1">
+          <a
+            href="https://x.com/vaultsreport"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 flex items-center justify-center gap-2 border px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted group-data-[collapsible=icon]:p-2"
+          >
+            <XLogo className="size-4" />
+            <span className="group-data-[collapsible=icon]:hidden">Follow</span>
+          </a>
+          <a
+            href="https://github.com/glamsystems/vaults-report"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 flex items-center justify-center gap-2 border px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted group-data-[collapsible=icon]:p-2"
+          >
+            <GitHubLogoIcon className="size-4" />
+            <span className="group-data-[collapsible=icon]:hidden">GitHub</span>
+          </a>
+        </div>
         <a
           href="https://glam.systems"
           target="_blank"

@@ -37,7 +37,7 @@ export function DashboardLayout({ children, title, defaultOpen, directoryCount }
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <div className="px-4">
+          <div className="hidden md:block px-4">
             <ModeToggle />
           </div>
         </header>

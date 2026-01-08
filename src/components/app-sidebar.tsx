@@ -177,7 +177,7 @@ export function AppSidebar({ directoryCount, isLearnPage = false, ...props }: Ap
             data-umami-event="github_click"
           >
             <GitHubLogoIcon className="size-4" />
-            <span className="group-data-[collapsible=icon]:hidden">GitHub</span>
+            <span className="group-data-[collapsible=icon]:hidden">Contribute</span>
           </a>
         </div>
         <a

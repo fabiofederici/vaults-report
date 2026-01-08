@@ -15,12 +15,13 @@ interface DashboardLayoutProps {
   title: string
   defaultOpen?: boolean
   directoryCount?: number
+  isLearnPage?: boolean
 }
 
-export function DashboardLayout({ children, title, defaultOpen, directoryCount }: DashboardLayoutProps) {
+export function DashboardLayout({ children, title, defaultOpen, directoryCount, isLearnPage }: DashboardLayoutProps) {
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
-      <AppSidebar directoryCount={directoryCount} />
+      <AppSidebar directoryCount={directoryCount} isLearnPage={isLearnPage} />
       <SidebarInset>
         <header className="bg-background sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex flex-1 items-center gap-2 px-4">

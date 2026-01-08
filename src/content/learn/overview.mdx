@@ -1,0 +1,30 @@
+---
+title: Overview
+order: 1
+---
+
+# Overview
+
+This resource is for institutional allocators, protocol evaluators, and operational teams assessing vault infrastructure. It supports three decisions: whether to use a vault, which vault architecture fits your requirements, and what ongoing monitoring posture to maintain.
+
+## Key Conclusions
+
+**Trust exists at two levels.** Depositors must evaluate both protocol-level risk (infrastructure upgrade authority, core contract security) and vault-level risk (owner configuration, delegate permissions). Neither level compensates for weakness in the other.
+
+**Architecture determines guarantees, not marketing.** Two vaults described identically can have fundamentally different risk profiles. One may allow instant upgrades by a single key; another may require multisignature approval with extended timelocks. One may guarantee withdrawals under all conditions; another may queue them indefinitely during stress. The only way to understand what protection you actually have is to examine the specific architecture.
+
+**Curator selection typically dominates outcomes within a given infrastructure.** Infrastructure sets boundaries on what is possible; curators determine what actually happens within those boundaries. Two curators using identical infrastructure can produce dramatically different results. When evaluating a vault, the operating party's track record, methodology, and operational discipline matter as much as the underlying platform.
+
+**Risk does not reduce to a single score.** Vault risk comprises distinct categories: smart contract vulnerabilities, oracle dependencies, governance and upgrade exposure, delegate and operational failures, contagion from shared infrastructure, and liquidity constraints. These interact under stress. A vault robust to any single risk may be vulnerable to combinations.
+
+**Minimum bars exist.** Some configurations should prompt careful scrutiny regardless of other merits: single-key upgrade authority without timelock, no documented incident response capability, withdrawal restrictions without clear conditions and rationale, or opaque offchain custody without attestations.
+
+## Market Context
+
+The vault ecosystem has grown significantly, with billions of dollars now held across major vault platforms. Separately, tokenized real-world assets have expanded substantially, with treasury-backed products and private credit representing the largest categories. This growth reflects both increased DeFi activity and institutional adoption of onchain asset management. Infrastructure has matured: multi-role permission systems, timelocked governance, and formal security programs are now common among established protocols.
+
+However, gaps remain. Side-pocketing mechanisms common in traditional funds are largely absent, meaning impaired positions can block redemptions for all depositors. Stress-tested withdrawal guarantees vary widely. Curator accountability frameworks are underdeveloped. Regulatory treatment remains unsettled.
+
+## Out of Scope
+
+This resource does not provide specific protocol recommendations, legal or tax advice, or investment guidance. It does not evaluate individual vaults or curators. Examples are illustrative, not endorsements.

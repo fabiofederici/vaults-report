@@ -121,7 +121,7 @@ export function ProjectHoverContent({ entry, category, isDark }: { entry: Direct
           className="size-8"
         />
         <div>
-          <p className="font-medium">{entry.name}</p>
+          <p className="font-medium font-[family-name:var(--font-geist-sans)]">{entry.name}</p>
           <p className="text-xs text-muted-foreground">
             {entry.subCategory || category}
           </p>

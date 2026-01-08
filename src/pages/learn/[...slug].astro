@@ -1,0 +1,60 @@
+---
+import { getCollection, getEntry } from 'astro:content'
+import { execSync } from 'child_process'
+import Layout from '../../layouts/Layout.astro'
+import { DashboardLayout } from '../../components/layout/DashboardLayout'
+import { LearnNav } from '../../components/learn/LearnNav'
+import { getGroupedDirectory } from '../../lib/directory'
+
+export async function getStaticPaths() {
+  const entries = await getCollection('learn')
+  return entries.map(entry => ({
+    params: { slug: entry.slug === 'overview' ? undefined : entry.slug },
+    props: { entry },
+  }))
+}
+
+const { entry } = Astro.props
+const { Content } = await entry.render()
+
+// Get last modified date from git
+let lastModified: string | null = null
+try {
+  const filePath = `src/content/learn/${entry.slug}.mdx`
+  const gitDate = execSync(`git log -1 --format=%cI -- "${filePath}"`, { encoding: 'utf-8' }).trim()
+  if (gitDate) {
+    lastModified = new Date(gitDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  }
+} catch (e) {
+  // Git command failed, skip showing date
+}
+
+// Get all entries sorted by order for navigation
+const allEntries = await getCollection('learn')
+const sortedEntries = allEntries.sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999))
+const currentIndex = sortedEntries.findIndex(e => e.slug === entry.slug)
+const prevEntry = currentIndex > 0 ? sortedEntries[currentIndex - 1] : null
+const nextEntry = currentIndex < sortedEntries.length - 1 ? sortedEntries[currentIndex + 1] : null
+
+const groupedData = getGroupedDirectory()
+const totalProjects = groupedData.reduce((sum, g) => sum + g.items.length, 0)
+---
+
+<Layout>
+  <DashboardLayout client:load title={entry.data.title} directoryCount={totalProjects} isLearnPage={true}>
+    <div class="max-w-2xl mx-auto">
+      <article class="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-normal prose-headings:font-[family-name:var(--font-geist-sans)] prose-p:font-[family-name:var(--font-geist-sans)] prose-p:text-foreground prose-strong:font-semibold prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:text-primary/80 prose-table:w-full prose-table:text-sm prose-thead:border-b prose-thead:border-border prose-th:h-10 prose-th:px-2 prose-th:text-left prose-th:align-middle prose-th:font-medium prose-th:font-mono prose-th:text-foreground prose-th:whitespace-nowrap [&_tbody_tr]:border-b [&_tbody_tr]:border-border [&_tbody_tr]:transition-colors [&_tbody_tr:hover]:bg-muted/50 prose-td:p-2 prose-td:align-top prose-td:font-[family-name:var(--font-geist-sans)] prose-td:text-muted-foreground">
+        <Content />
+      </article>
+      <LearnNav
+        prevPage={prevEntry ? { title: prevEntry.data.title, slug: prevEntry.slug } : undefined}
+        nextPage={nextEntry ? { title: nextEntry.data.title, slug: nextEntry.slug } : undefined}
+        lastModified={lastModified}
+      />
+    </div>
+  </DashboardLayout>
+</Layout>

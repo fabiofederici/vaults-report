@@ -1,7 +1,12 @@
 import * as React from "react"
-import { FolderOpen, Books, Info, Globe, XLogo } from "@phosphor-icons/react"
+import { FolderOpen, Books, Info, Globe, XLogo, GraduationCap, CaretRight } from "@phosphor-icons/react"
 import { GitHubLogoIcon } from "@radix-ui/react-icons"
 
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 import {
   Sidebar,
   SidebarContent,
@@ -12,6 +17,9 @@ import {
   SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarHeader,
   SidebarFooter,
   SidebarRail,
@@ -22,6 +30,14 @@ import { useIsMobile } from "@/hooks/use-mobile"
 const navItems = [
   { title: "Directory", url: "/directory", icon: FolderOpen },
   { title: "Ecosystem", url: "/ecosystem", icon: Globe, desktopOnly: true },
+]
+
+const learnItems = [
+  { title: "Categories", url: "/learn/categories" },
+  { title: "Glossary", url: "/learn/glossary" },
+]
+
+const secondaryNavItems = [
   { title: "Resources", url: "/resources", icon: Books },
 ]
 
@@ -31,10 +47,19 @@ const secondaryItems = [
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   directoryCount?: number
+  isLearnPage?: boolean
 }
 
-export function AppSidebar({ directoryCount, ...props }: AppSidebarProps) {
+export function AppSidebar({ directoryCount, isLearnPage = false, ...props }: AppSidebarProps) {
   const isMobile = useIsMobile()
+
+  // Initialize from server-side prop to avoid hydration mismatch
+  const [learnOpen, setLearnOpen] = React.useState(isLearnPage)
+
+  const handleLearnToggle = (open: boolean) => {
+    setLearnOpen(open)
+  }
+
   const filteredNavItems = navItems.filter(item => !item.desktopOnly || !isMobile)
 
   return (
@@ -71,6 +96,48 @@ export function AppSidebar({ directoryCount, ...props }: AppSidebarProps) {
                   {item.title === "Directory" && directoryCount && (
                     <SidebarMenuBadge className="text-muted-foreground">[{directoryCount}]</SidebarMenuBadge>
                   )}
+                </SidebarMenuItem>
+              ))}
+
+              {/* Learn - Collapsible with split button */}
+              <Collapsible open={learnOpen} onOpenChange={handleLearnToggle} className="group/collapsible">
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <a href={`${import.meta.env.BASE_URL}learn`}>
+                      <GraduationCap />
+                      <span>Learn</span>
+                    </a>
+                  </SidebarMenuButton>
+                  <CollapsibleTrigger asChild>
+                    <button className="absolute right-1 top-1.5 p-1 hover:bg-sidebar-accent rounded-md">
+                      <CaretRight className="size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    </button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {learnItems.map((item) => (
+                        <SidebarMenuSubItem key={item.title}>
+                          <SidebarMenuSubButton asChild>
+                            <a href={`${import.meta.env.BASE_URL}${item.url.replace(/^\//, '')}`}>
+                              <span>{item.title}</span>
+                            </a>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+
+              {/* Resources */}
+              {secondaryNavItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a href={`${import.meta.env.BASE_URL}${item.url.replace(/^\//, '')}`}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

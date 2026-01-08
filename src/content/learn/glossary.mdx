@@ -1,0 +1,62 @@
+---
+title: Glossary
+order: 3
+---
+
+# Glossary
+
+This glossary defines terminology used throughout the Vaults Report.
+
+| Term | Definition |
+| :---- | :---- |
+| **APY (Annual Percentage Yield)** | Annualized rate of return on deposited assets. Headline figures rarely account for all costs; net realized returns often differ from advertised rates. |
+| **Audit** | Independent security review of smart contract code. Coverage refers to which components were reviewed, by which firms, and how recently. |
+| **Bridge** | Infrastructure enabling asset or message transfer between different blockchain networks. Evaluation requires understanding finality assumptions, message verification methods, custody points during transit, and behavior during outages. |
+| **Bug Bounty** | A program offering financial rewards to security researchers who discover and responsibly disclose vulnerabilities. Program size should be commensurate with TVL at risk. |
+| **Contagion Risk** | The potential for problems in shared infrastructure to affect multiple vaults. Considerations include vault isolation guarantees, integration isolation, protocol-level shared components, and dependency chains. |
+| **Cross-Chain** | Operations or infrastructure spanning multiple blockchain networks. Cross-chain vaults require evaluation of bridge dependencies, finality assumptions, and custody arrangements during transit. |
+| **Curator** | Party operating vault strategy within explicit constraints set by infrastructure or owner. Compare with Manager. |
+| **Delegate** | A role with operational permissions granted by the vault owner. Delegates typically have authority to deploy capital within parameters but cannot modify vault configuration. Delegate permission scope and the presence (or absence) of onchain thresholds are critical evaluation factors. |
+| **Epoch-based Withdrawal** | A withdrawal mechanism that processes redemption requests at fixed intervals rather than immediately. Essential for strategies requiring committed capital; provides predictable timing but locks capital for defined periods. |
+| **ERC-4626** | A standard interface for tokenized vaults on EVM-compatible blockchains. Defines how vaults handle deposits, withdrawals, and share accounting. Implementations vary despite the common standard. |
+| **ERC-7540** | Extension to ERC-4626 supporting asynchronous deposits and redemptions. Limited deployment as of early 2025\. |
+| **ERC-7575** | Extension to ERC-4626 supporting multi-asset vaults. Limited deployment as of early 2025\. |
+| **Execution Costs** | Costs incurred when implementing vault strategies, including slippage (price impact of trades) and gas fees (blockchain transaction costs). These reduce net returns below headline rates. |
+| **Finality** | The point at which a blockchain transaction is irreversible. Bridge finality assumptions refer to the confidence level required before treating cross-chain messages as confirmed. |
+| **Formal Verification** | Mathematical proof that smart contract code behaves according to specification. A higher assurance level than standard auditing, typically applied to critical code paths. |
+| **Governance** | The mechanisms by which protocol or vault parameters can be changed. Includes who holds authority, what constraints exist (timelocks, multisig requirements), and what processes govern decision-making. |
+| **Guaranteed Exit** | A withdrawal mechanism ensuring redemption is always possible, potentially through forced position unwinding. Often involves penalty costs but provides assurance that exits cannot be blocked indefinitely. |
+| **Guardian / Sentinel** | A role with emergency capabilities only, such as pausing operations or reducing exposure. Cannot expand vault capabilities or deploy capital. Designed for rapid protective response. |
+| **High-Water Mark** | A performance fee mechanism ensuring fees are only charged on new profits, not on recovery of previous losses. A vault must exceed its previous peak value before performance fees apply. |
+| **Immutable Contracts** | Smart contracts that cannot be modified after deployment. Provides certainty that rules will not change but means discovered vulnerabilities cannot be patched; migration to new contracts is the only fix. |
+| **Infrastructure** | Foundational layer providing smart contract frameworks, share accounting, and permission enforcement. Enables vault creation; does not operate strategies. |
+| **Instant Redemption** | A withdrawal mechanism that processes redemptions immediately from available liquidity. Constrains strategies to liquid positions but provides immediate access to capital. |
+| **Integration** | A connection enabling a vault to access an external protocol or yield source. Each enabled integration extends the vault’s trusted surface. Integrations may be enabled per-vault or automatically across all vaults on a platform. |
+| **Liquidity Risk** | The risk that depositors cannot exit at fair value when desired. Factors include withdrawal mechanism type, behavior during high redemption demand, and underlying position liquidity. |
+| **Management Fee** | A fee charged as a percentage of assets under management, typically expressed as an annual rate. One component of total vault costs. |
+| **Manager** | Party with broad discretion over vault operations; fewer explicit constraints than curator role. Compare with Curator. |
+| **MEV (Maximal Extractable Value)** | Value extracted from blockchain users through transaction ordering exploits such as front-running and sandwich attacks. Vault transactions can lose value to MEV; strategies with predictable rebalancing are particularly exposed. |
+| **Modular Architecture** | A contract design separating core vault functionality from peripheral components. The core protocol remains stable while integration modules can be added or updated independently. |
+| **Multisig / Multisignature** | A governance structure requiring multiple parties to approve actions. Described by threshold (e.g., 3-of-5 requires three of five signers). Reduces single-point-of-failure risk but adds coordination overhead. |
+| **Non-Custodial** | Architecture where depositors can withdraw their proportional share without permission from any other party, enforced at contract level. |
+| **Oracle** | A service providing external data (typically prices) to smart contracts. Oracle dependencies create risk of manipulation or failure. Evaluation includes understanding which providers are used, integrity checks, and fallback behavior. |
+| **Performance Fee** | A fee charged as a percentage of gains, typically calculated relative to a high-water mark. One component of total vault costs. |
+| **Permission System** | The mechanism determining who can take what actions within a vault. Roles typically include owner (configuration authority), delegates (operational permissions), and potentially guardian (emergency actions only). |
+| **Policy Layer** | Constraints on allowable actions regardless of who initiates them. Policies might restrict accessible protocols, cap exposures, or limit allocation rates. Provides guardrails around operator discretion. |
+| **Private Credit** | Onchain lending to institutional borrowers, often representing real-world credit arrangements. Offers higher yields but involves credit risk, counterparty risk, and reduced liquidity compared to crypto-native lending. |
+| **Protocol Fee** | A fee charged by infrastructure providers, separate from management and performance fees charged by curators. One component of total vault costs. |
+| **Protocol-Level Risk** | Risk arising from infrastructure that affects all vaults on a platform, regardless of individual vault configuration. Includes program upgrade authority, core contract security, and protocol-level parameters. A well-configured vault on a poorly-governed protocol is still exposed. |
+| **Queue-based Withdrawal** | A withdrawal mechanism that processes requests in order as liquidity becomes available. Provides fair ordering but uncertain timing. Common in strategies with illiquid underlying positions. |
+| **Restaking** | Using already-staked assets to secure additional networks. Introduces layered slashing exposure and dependencies between networks. Returns come from providing security to multiple protocols. |
+| **Share Accounting** | The mechanism tracking each depositor’s proportional claim on vault assets. Shares represent ownership; their value changes as underlying assets appreciate or depreciate. |
+| **Side-Pocketing** | A mechanism for isolating impaired or illiquid positions from the main vault, allowing unaffected positions to remain liquid. Largely absent in current vault infrastructure despite being common in traditional fund structures. |
+| **Slashing** | Penalty mechanism in staking and restaking where a portion of staked capital is destroyed due to operator misbehavior or failure. An intended mechanism, not a failure mode; evaluate whether expected rewards justify slashing risk. |
+| **Smart Contract** | Self-executing code deployed on a blockchain that enforces rules without intermediaries. Vaults are implemented as smart contracts. Bugs in smart contracts can cause loss regardless of strategy soundness. |
+| **Staking** | Committing capital to secure a blockchain network in exchange for rewards. Involves slashing risk if operators misbehave. |
+| **Timelock** | Delay between action proposal and execution; provides notice for depositors to exit before changes take effect. Should exceed your internal review and redemption process. |
+| **Tokenization / Tokenized Assets** | Representing traditionally offchain assets (treasury securities, private credit, real estate) as blockchain tokens. Introduces issuer risk, legal structure risk, and redemption uncertainty alongside smart contract considerations. |
+| **TVL (Total Value Locked)** | The total value of assets deposited in a protocol or vault, typically denominated in USD. A common but imperfect metric for protocol scale; figures vary by source and methodology. |
+| **Upgradeable Contracts** | Smart contracts that authorized parties can modify after deployment. Enables bug fixes and improvements but requires trust in upgrade authority. Understanding who holds upgrade authority and what governance constrains them is essential. |
+| **Vault** | Smart contract that pools capital and deploys it according to defined logic. Issues shares representing proportional ownership. |
+| **Vault-Level Risk** | Risk arising from the configuration of a specific vault, controlled by the vault owner. Includes timelock settings, delegate permissions, enabled integrations, and fee parameters. Affects only that specific vault, not others on the same infrastructure. |
+| **Yield Aggregator** | A protocol automating allocation across multiple yield sources. Inherits risk from underlying venues plus routing logic. Distinct from vault infrastructure; often serves as a deployment destination for vaults. |

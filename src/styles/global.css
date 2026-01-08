@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@plugin "@tailwindcss/typography";
+
 /* Geist Mono Variable (default) */
 @font-face {
   font-family: 'Geist Mono';
@@ -184,5 +186,6 @@
   }
   html {
     @apply font-sans;
+    overscroll-behavior: none;
   }
 }

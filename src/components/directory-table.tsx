@@ -276,7 +276,7 @@ export function DirectoryTable({ data }: DirectoryTableProps) {
                           alt={entry.name}
                           className="size-6"
                         />
-                        <span className="font-medium">{entry.name}</span>
+                        <span className="font-medium font-[family-name:var(--font-geist-sans)]">{entry.name}</span>
                       </div>
                     </TableCell>
                     <TableCell>

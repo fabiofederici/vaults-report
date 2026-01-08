@@ -235,7 +235,7 @@ export function ResourcesTable({ data }: ResourcesTableProps) {
               onClick={() => window.open(resource.url, '_blank')}
             >
               <TableCell className="max-w-[280px]">
-                <span className="font-medium truncate block" title={resource.name}>
+                <span className="font-medium font-[family-name:var(--font-geist-sans)] truncate block" title={resource.name}>
                   {resource.name}
                 </span>
               </TableCell>

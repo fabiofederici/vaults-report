@@ -29,7 +29,7 @@ When using content from this project:
 - If you use the data or documentation, follow the CC BY 4.0 terms
 - If you use both, respect both licenses as appropriate
 
-For questions about licensing, please open an issue or contact legal@glam.systems.
+For questions about licensing, please open an issue or contact legal@lamport.systems.
 
 ---
 

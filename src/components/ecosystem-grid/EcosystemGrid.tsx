@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useMemo } from 'react'
 
 declare global {
   interface Window {
@@ -11,7 +11,29 @@ import { ResponsiveTreeMap } from '@nivo/treemap'
 import { LabeledContainer } from './LabeledContainer'
 import { ItemTile } from './ItemTile'
 import { Toolbar, type ExportFormat } from './Toolbar'
+import { DevToolbar, type TileMode } from './DevToolbar'
 import type { DirectoryEntry, GroupedDirectory } from '../../lib/directory'
+
+// Create a dummy entry for testing
+function createDummyEntry(category: string, index: number): DirectoryEntry {
+  return {
+    name: `Dummy ${index + 1}`,
+    slug: `dummy-${category.toLowerCase().replace(/\s+/g, '-')}-${index}`,
+    url: '#',
+    description: 'Test item for layout debugging',
+    category,
+    subCategory: '',
+    chains: [],
+    status: 'active',
+    listed: true,
+    github: '',
+    docs: '',
+    twitter: '',
+    linkedin: '',
+    email: '',
+    telegram: '',
+  }
+}
 
 const CARD_SIZE = 64 // px
 const BOX_PADDING = 20 // padding inside box for label + margins
@@ -49,6 +71,12 @@ export function EcosystemGrid({ data }: EcosystemGridProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const [isDark, setIsDark] = useState(false)
 
+  // Dev toolbar state
+  const [tileMode, setTileMode] = useState<TileMode>('binary')
+  const [categoryDeltas, setCategoryDeltas] = useState<Record<string, number>>({})
+  const [scale, setScale] = useState(1.5)
+  const [innerPadding, setInnerPadding] = useState(12)
+
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains('dark'))
 
@@ -59,6 +87,39 @@ export function EcosystemGrid({ data }: EcosystemGridProps) {
 
     return () => observer.disconnect()
   }, [])
+
+  // Create modified data with dummy items based on deltas
+  const modifiedData = useMemo(() => {
+    return data.map((group) => {
+      const delta = categoryDeltas[group.category] || 0
+      if (delta === 0) return group
+      if (delta > 0) {
+        // Add dummy items
+        const dummies = Array.from({ length: delta }, (_, i) =>
+          createDummyEntry(group.category, i)
+        )
+        return { ...group, items: [...group.items, ...dummies] }
+      } else {
+        // Remove items (from end, but keep at least 0)
+        const newLength = Math.max(0, group.items.length + delta)
+        return { ...group, items: group.items.slice(0, newLength) }
+      }
+    }).filter(group => group.items.length > 0) // Remove empty groups
+  }, [data, categoryDeltas])
+
+  const handleCountChange = (categoryName: string, delta: number) => {
+    setCategoryDeltas((prev) => ({
+      ...prev,
+      [categoryName]: (prev[categoryName] || 0) + delta,
+    }))
+  }
+
+  // Category info for dev toolbar
+  const categoryInfo = data.map((group) => ({
+    name: group.category,
+    originalCount: group.items.length,
+    count: group.items.length + (categoryDeltas[group.category] || 0),
+  }))
 
   const generateExportCanvas = async (): Promise<HTMLCanvasElement | null> => {
     if (!mapRef.current) return null
@@ -89,7 +150,7 @@ export function EcosystemGrid({ data }: EcosystemGridProps) {
 
     // Center the chart
     const offsetX = Math.floor((EXPORT_WIDTH - chartWidth) / 2)
-    const offsetY = HEADER_HEIGHT + PADDING + Math.floor((availableHeight - chartHeight) / 2)
+    const offsetY = HEADER_HEIGHT + PADDING + Math.floor((availableHeight - chartHeight) / 2) + 25
 
     // Create canvas - fixed 16:9
     const canvas = document.createElement('canvas')
@@ -243,70 +304,96 @@ export function EcosystemGrid({ data }: EcosystemGridProps) {
     })
   }
 
-  // Calculate total area needed
+  // Calculate total area using ORIGINAL data for stable box sizes
   const totalArea = data.reduce((sum, g) => sum + calcMinArea(g.items.length), 0)
 
   // Size container to fit all items with 16:9 ratio
-  const scale = 1.3 // extra space for treemap inefficiency
   const treeWidth = Math.ceil(Math.sqrt(totalArea * scale * (16 / 9)))
   const treeHeight = Math.ceil(treeWidth * (9 / 16))
 
-  // Transform data for nivo treemap - use calculated area as value
+  // Calculate global card size - find the category that needs the smallest cards
+  // This ensures uniform logo sizing across all categories
+  const globalCardSize = useMemo(() => {
+    let minSize = CARD_SIZE // Start with default 64
+
+    for (const group of modifiedData) {
+      const originalGroup = data.find((g) => g.category === group.category)
+      const originalCount = originalGroup?.items.length || group.items.length
+
+      if (group.items.length > originalCount) {
+        const ratio = Math.sqrt(originalCount / group.items.length)
+        const neededSize = Math.floor(CARD_SIZE * ratio)
+        minSize = Math.min(minSize, neededSize)
+      }
+    }
+
+    return Math.max(32, minSize) // Min 32px
+  }, [data, modifiedData])
+
+  // Transform data for nivo treemap
+  // Use original counts for area (stable sizing), but modified items for rendering
   const treeData = {
     name: 'root',
-    children: data.map((group) => ({
-      name: group.category,
-      value: calcMinArea(group.items.length),
-      items: group.items,
-    })),
+    children: modifiedData.map((group) => {
+      const originalGroup = data.find((g) => g.category === group.category)
+      const originalCount = originalGroup?.items.length || group.items.length
+      return {
+        name: group.category,
+        value: calcMinArea(originalCount), // Stable area based on original count
+        items: group.items, // Actual items to render (may include dummies)
+        originalCount,
+      }
+    }),
   }
 
   return (
     <div className="flex flex-col gap-2 items-center">
-      <div ref={mapRef} className="bg-background" style={{ width: treeWidth + 24, height: treeHeight + 32, paddingTop: 20, paddingLeft: 12, paddingRight: 12, paddingBottom: 12 }}>
+      <div ref={mapRef} className="debug-border bg-background flex items-start justify-center" style={{ width: treeWidth + 48, minHeight: treeHeight + 48, padding: 24, overflow: 'visible' }}>
+        <div style={{ width: treeWidth, height: treeHeight }}>
         <ResponsiveTreeMap
           data={treeData}
           identity="name"
           value="value"
-          tile="squarify"
+          tile={tileMode}
           leavesOnly={true}
-          innerPadding={12}
-          outerPadding={0}
+          innerPadding={innerPadding}
+          outerPadding={12}
           borderWidth={0}
           colors={['transparent']}
           nodeComponent={({ node }) => {
-            const items = (node.data as { items?: DirectoryEntry[] }).items || []
+            const nodeData = node.data as { items?: DirectoryEntry[]; originalCount?: number }
+            const items = nodeData.items || []
             const labelHeight = 8 // space for label above border
             const padding = 4 // px-1 + border
             const availableWidth = node.width - padding * 2
 
-            // Calculate how many items fit and actual height needed
-            const itemCols = Math.max(1, Math.floor(availableWidth / CARD_SIZE))
-            const itemRows = Math.ceil(items.length / itemCols)
-            const contentHeight = itemRows * CARD_SIZE + 24 // pt-5 + pb-1
+            // Use global card size for uniform sizing across all categories
+            const cardSize = globalCardSize
 
-            // Bottom-align: offset by difference between allocated and actual height
-            const topOffset = Math.max(0, node.height - contentHeight)
+            // Calculate how many items fit and actual height needed
+            const itemCols = Math.max(1, Math.floor(availableWidth / cardSize))
+            const itemRows = Math.ceil(items.length / itemCols)
+            const contentHeight = itemRows * cardSize + 24 // pt-5 + pb-1
 
             return (
               <g transform={`translate(${node.x},${node.y})`}>
                 <foreignObject
                   width={node.width}
-                  height={node.height + labelHeight}
-              y={-labelHeight}
+                  height={contentHeight + labelHeight}
+                  y={-labelHeight}
                   style={{ overflow: 'visible' }}
                 >
-                  <div style={{ marginTop: labelHeight + topOffset }}>
+                  <div style={{ marginTop: labelHeight }}>
                     <LabeledContainer
                       label={`${node.id} [${items.length}]`}
-                      style={{ width: itemCols * CARD_SIZE + padding * 2 + 2, height: contentHeight }}
+                      style={{ width: itemCols * cardSize + padding * 2 + 2, height: contentHeight }}
                     >
                       <div
                         className="flex flex-wrap content-start"
-                        style={{ width: itemCols * CARD_SIZE }}
+                        style={{ width: itemCols * cardSize }}
                       >
                         {items.map((item) => (
-                          <ItemTile key={item.slug} entry={item} category={node.id as string} />
+                          <ItemTile key={item.slug} entry={item} category={node.id as string} size={cardSize} />
                         ))}
                       </div>
                     </LabeledContainer>
@@ -316,10 +403,21 @@ export function EcosystemGrid({ data }: EcosystemGridProps) {
             )
           }}
         />
+        </div>
       </div>
-      <div className="flex justify-end mt-12" style={{ width: treeWidth + 24 }}>
+      <div className="flex justify-end mt-12" style={{ width: treeWidth + 48 }}>
         <Toolbar onExport={handleExport} />
       </div>
+      <DevToolbar
+        tileMode={tileMode}
+        onTileModeChange={setTileMode}
+        categories={categoryInfo}
+        onCountChange={handleCountChange}
+        scale={scale}
+        onScaleChange={setScale}
+        innerPadding={innerPadding}
+        onInnerPaddingChange={setInnerPadding}
+      />
     </div>
   )
 }

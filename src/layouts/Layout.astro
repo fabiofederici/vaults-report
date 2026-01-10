@@ -3,6 +3,11 @@ import '../styles/global.css'
 ---
 
 <script is:inline>
+  // Debug mode: only on localhost
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    document.documentElement.dataset.debug = 'true';
+  }
+
   const getThemePreference = () => {
     if (typeof localStorage !== 'undefined') {
       const stored = localStorage.getItem('theme');

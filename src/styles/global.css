@@ -196,7 +196,18 @@
   /* Scroller container - iOS momentum scrolling & GPU layer */
   .mdx-table-scroller > div {
     -webkit-overflow-scrolling: touch;
-    transform: translateZ(0);
+    touch-action: pan-x pan-y;
+  }
+
+  /* Hide scrollbar but keep scroll functionality */
+  [data-slot="table-container"],
+  .mdx-table-scroller > div {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  [data-slot="table-container"]::-webkit-scrollbar,
+  .mdx-table-scroller > div::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Opera */
   }
 
   /* Tables need border-collapse: separate for sticky to work */

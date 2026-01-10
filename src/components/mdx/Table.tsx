@@ -22,10 +22,10 @@ export function Table({ children, ...props }: ComponentProps<'table'>) {
   }, [])
 
   return (
-    <div className="mdx-table-scroller w-full max-w-full min-w-0 my-6 overflow-hidden">
+    <div className="mdx-table-scroller w-full max-w-full min-w-0 my-6">
       <div
         ref={scrollerRef}
-        className="overflow-x-auto"
+        className="overflow-x-auto overscroll-x-contain"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         <table {...props}>

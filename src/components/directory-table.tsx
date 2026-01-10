@@ -163,7 +163,15 @@ export function DirectoryTable({ data }: DirectoryTableProps) {
   const [search, setSearch] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedChains, setSelectedChains] = useState<string[]>([])
-  const [isDark, setIsDark] = useState(false)
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window === 'undefined') return false
+    // Mirror Layout.astro logic
+    const stored = localStorage.getItem('theme')
+    if (stored === 'dark') return true
+    if (stored === 'light') return false
+    // System preference
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+  })
   const isMobile = useIsMobile()
 
   useEffect(() => {

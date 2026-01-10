@@ -4,41 +4,43 @@ import { Skeleton } from '@/components/ui/skeleton'
 interface ThemedLogoProps {
   slug: string
   name: string
-  isDark: boolean
   className?: string
+  isDark?: boolean // Kept for backward compatibility but ignored
 }
 
-export function ThemedLogo({ slug, name, isDark, className = 'size-6' }: ThemedLogoProps) {
-  const [loaded, setLoaded] = useState(false)
-  const [currentTheme, setCurrentTheme] = useState(isDark)
-  const imgRef = useRef<HTMLImageElement>(null)
+export function ThemedLogo({ slug, name, className = 'size-6' }: ThemedLogoProps) {
+  const lightSrc = `${import.meta.env.BASE_URL}assets/logos/normalized/${slug}-light.svg`
+  const darkSrc = `${import.meta.env.BASE_URL}assets/logos/normalized/${slug}-dark.svg`
 
-  const src = `${import.meta.env.BASE_URL}assets/logos/normalized/${slug}-${isDark ? 'dark' : 'light'}.svg`
+  const [lightLoaded, setLightLoaded] = useState(false)
+  const [darkLoaded, setDarkLoaded] = useState(false)
+  const lightRef = useRef<HTMLImageElement>(null)
+  const darkRef = useRef<HTMLImageElement>(null)
 
-  // Reset loaded state when theme changes
+  // Check if images are already loaded (from cache)
   useEffect(() => {
-    if (isDark !== currentTheme) {
-      setLoaded(false)
-      setCurrentTheme(isDark)
-    }
-  }, [isDark, currentTheme])
+    if (lightRef.current?.complete) setLightLoaded(true)
+    if (darkRef.current?.complete) setDarkLoaded(true)
+  }, [])
 
-  // Check if image is already loaded (from cache)
-  useEffect(() => {
-    if (imgRef.current?.complete) {
-      setLoaded(true)
-    }
-  }, [src])
+  const loaded = lightLoaded && darkLoaded
 
   return (
     <div className={`relative flex-shrink-0 ${className}`}>
       {!loaded && <Skeleton className="absolute inset-0 rounded-sm" />}
       <img
-        ref={imgRef}
-        src={src}
+        ref={lightRef}
+        src={lightSrc}
         alt={name}
-        className={`w-full h-full object-contain ${loaded ? 'opacity-100' : 'opacity-0'} transition-opacity`}
-        onLoad={() => setLoaded(true)}
+        className={`w-full h-full object-contain dark:hidden ${loaded ? 'opacity-100' : 'opacity-0'} transition-opacity`}
+        onLoad={() => setLightLoaded(true)}
+      />
+      <img
+        ref={darkRef}
+        src={darkSrc}
+        alt={name}
+        className={`w-full h-full object-contain hidden dark:block absolute inset-0 ${loaded ? 'opacity-100' : 'opacity-0'} transition-opacity`}
+        onLoad={() => setDarkLoaded(true)}
       />
     </div>
   )

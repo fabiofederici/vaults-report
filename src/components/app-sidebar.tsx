@@ -71,6 +71,10 @@ export function AppSidebar({ directoryCount, isLearnPage = false, currentPath = 
   const isPathActive = (itemUrl: string) => {
     const normalizedPath = currentPath.replace(/\/$/, '') || '/'
     const normalizedItemUrl = itemUrl.replace(/\/$/, '') || '/'
+    // Homepage "/" should match "/directory"
+    if (normalizedPath === '' || normalizedPath === '/') {
+      return normalizedItemUrl === '/directory'
+    }
     return normalizedPath === normalizedItemUrl
   }
 

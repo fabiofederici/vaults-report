@@ -1,5 +1,6 @@
 import { GithubLogo, FileText, XLogo, Globe, LinkedinLogo, EnvelopeSimple, TelegramLogo } from '@phosphor-icons/react'
 import type { DirectoryEntry } from '@/lib/directory'
+import { ThemedLogo } from '@/components/shared/ThemedLogo'
 
 export function ChainBadges({ chains, maxRows = 1 }: { chains: string[]; maxRows?: 1 | 2 }) {
   if (!chains.length) return <span className="text-muted-foreground">—</span>
@@ -136,11 +137,7 @@ export function ProjectHoverContent({ entry, category, isDark }: { entry: Direct
     <div className="space-y-3 text-sm">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <img
-          src={`${import.meta.env.BASE_URL}assets/logos/normalized/${entry.slug}-${isDark ? 'dark' : 'light'}.svg`}
-          alt={entry.name}
-          className="size-8"
-        />
+        <ThemedLogo slug={entry.slug} name={entry.name} isDark={isDark} className="size-8" />
         <div>
           <p className="font-medium font-[family-name:var(--font-geist-sans)]">{entry.name}</p>
           <p className="text-xs text-muted-foreground">

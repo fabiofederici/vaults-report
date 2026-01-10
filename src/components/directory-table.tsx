@@ -29,6 +29,7 @@ import {
   MenubarTrigger,
 } from '@/components/ui/menubar'
 import { ChainBadges, LinkIcons, ProjectHoverContent } from '@/components/shared/ProjectHoverContent'
+import { ThemedLogo } from '@/components/shared/ThemedLogo'
 import type { DirectoryEntry, GroupedDirectory } from '@/lib/directory'
 import { useIsMobile } from '@/hooks/use-mobile'
 
@@ -297,11 +298,7 @@ export function DirectoryTable({ data }: DirectoryTableProps) {
                   <TableRow key={entry.slug}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <img
-                          src={`${import.meta.env.BASE_URL}assets/logos/normalized/${entry.slug}-${isDark ? 'dark' : 'light'}.svg`}
-                          alt={entry.name}
-                          className="size-6"
-                        />
+                        <ThemedLogo slug={entry.slug} name={entry.name} isDark={isDark} className="size-6" />
                         <span className="font-medium font-[family-name:var(--font-geist-sans)]">{entry.name}</span>
                       </div>
                     </TableCell>

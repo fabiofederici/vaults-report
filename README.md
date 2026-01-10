@@ -52,6 +52,8 @@ To add or update a protocol:
 2. Follow the schema in `data/schema.yaml`
 3. Submit a pull request
 
+See [CONTRIBUTING](CONTRIBUTING.md) for detailed guidelines.
+
 ## License
 
 - Code: [MIT](LICENSE)

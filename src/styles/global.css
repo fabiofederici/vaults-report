@@ -177,6 +177,11 @@
     --radius-4xl: calc(var(--radius) + 16px);
 }
 
+/* Debug utilities - only visible on localhost (html[data-debug]) */
+html[data-debug] .debug-border {
+  border: 2px dashed red !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

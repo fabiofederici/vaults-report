@@ -56,7 +56,7 @@ See [CONTRIBUTING](CONTRIBUTING.md) for detailed guidelines.
 
 ## License
 
-- Code: [MIT](LICENSE)
+- Code: [MIT](LICENSE-MIT.md)
 - Data & Content: [CC BY 4.0](LICENSE-CC-BY.md)
 
 ## Links
